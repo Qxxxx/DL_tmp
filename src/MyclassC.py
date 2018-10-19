@@ -63,8 +63,19 @@ class DataGenerator(keras.utils.Sequence):
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
             # Store sample
-            img = load_img(ID)
-            tmp = img_to_array(img)
+            try:
+                img = load_img(ID)
+                tmp = img_to_array(img)
+            except:
+                tmp = []
+                suffix = ['_green.png','_blue.png','_yellow.png','_red.png']
+                for s in suffix:
+                    img = load_img(ID+s)
+                    tt = img_to_array(img)
+                    if tmp == []:
+                        tmp = tt
+                    else:
+                        tmp = np.concatenate((tmp,tt),axis=2)
             
             if self.dataAug:
                 rr = random.randint(0,3)
@@ -79,13 +90,16 @@ class DataGenerator(keras.utils.Sequence):
         #X = self.imgGenerator.standardize(X)
         return X, y
     
-def loadData(csv,N_CLASS,DATA_DIR):
+def loadData(csv,N_CLASS,DATA_DIR,suffix=None):
     Ids = []
     labels = {}
     with open(csv,'r') as f:
         next(f)
         for l in f:
-            name = l.strip().split(',')[0]+'_green.png'
+            if suffix == None:
+                name = l.strip().split(',')[0]
+            else:
+                name = l.strip().split(',')[0]+suffix
             l = l.strip().split(',')[1]
             l = l.split()
             l = list(map(lambda x:int(x),l))
