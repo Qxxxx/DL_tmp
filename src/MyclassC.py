@@ -76,7 +76,7 @@ class DataGenerator(keras.utils.Sequence):
 
             # Store class
             y[i] = self.labels[ID]
-        #X = self.imgGenerator.standardize(X)
+        X = self.imgGenerator.standardize(X)
         return X, y
     
 def loadData(csv,N_CLASS,DATA_DIR):
